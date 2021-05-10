@@ -45,10 +45,14 @@ class MainActivity : ComponentActivity() {
 private fun MainLayout() {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberBottomSheetScaffoldState()
-    var currentBottomSheet: BottomSheetScreen by remember{
-        mutableStateOf(BottomSheetScreen.Screen1)
+    var currentBottomSheet: BottomSheetScreen? by remember{
+        mutableStateOf(null)
     }
 
+
+    // to set the current sheet to null when the bottom sheet closes
+    if(scaffoldState.bottomSheetState.isCollapsed)
+        currentBottomSheet = null
 
 
     val closeSheet: () -> Unit = {
@@ -60,15 +64,18 @@ private fun MainLayout() {
 
 
     val openSheet: (BottomSheetScreen) -> Unit = {
-        currentBottomSheet = it
-        scope.launch { scaffoldState.bottomSheetState.expand() }
+        scope.launch {
+            currentBottomSheet = it
+            scaffoldState.bottomSheetState.expand() }
 
     }
 
     BottomSheetScaffold(sheetPeekHeight = 0.dp, scaffoldState = scaffoldState,
         sheetShape = BottomSheetShape,
         sheetContent = {
-            SheetLayout(currentBottomSheet,closeSheet)
+            currentBottomSheet?.let { currentSheet ->
+                SheetLayout(currentSheet,closeSheet)
+            }
         }) { paddingValues ->
             Box(Modifier.padding(paddingValues)){
                 MainContent(openSheet)
