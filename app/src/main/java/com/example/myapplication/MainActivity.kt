@@ -49,6 +49,8 @@ private fun MainLayout() {
         mutableStateOf(null)
     }
 
+    if(scaffoldState.bottomSheetState.isCollapsed)
+        currentBottomSheet = null
 
     // to set the current sheet to null when the bottom sheet closes
     if(scaffoldState.bottomSheetState.isCollapsed)
